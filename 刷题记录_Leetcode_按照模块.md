@@ -395,7 +395,7 @@ class Solution:
 
 > 给定一个非负整数 `c` ，你要判断是否存在两个整数 `a` 和 `b`，使得$$a^2+b^2=c$$。
 
-双指针法，一个指向$$\sqrt c$$ 一个指向0
+双指针法，一个指向$$c$$ 一个指向0
 
 ```python
 class Solution:
@@ -1277,3 +1277,110 @@ class Solution:
 >
 > 两个相邻元素间的距离为 1 。
 >
+
+
+
+```python
+class Solution:
+    def updateMatrix(self, mat: List[List[int]]) -> List[List[int]]:
+        #记录到0的距离(需要更新的矩阵)
+        dist = [[0 for _ in range(len(mat[0]))] for _ in range(len(mat))]
+        #0的index队列#需要遍历的队列
+        q = [(i,j) for i in range(len(mat)) for j in range(len(mat[0])) if mat[i][j]==0]
+        #已经遍历过的坐标
+        seen = set(q)
+        while q:
+            i,j = q.pop(0)
+            for ii,jj in [(i+1,j),(i-1,j),(i,j+1),(i,j-1)]:
+                if 0 <= ii < len(mat) and 0 <= jj <len(mat[0]) and (ii,jj) not in seen:
+                    dist[ii][jj] = dist[i][j] + 1
+                    seen.add((ii,jj))
+                    q.append((ii,jj))
+        return dist
+```
+
+### 221 最大正方形
+
+> 在一个由 `'0'` 和 `'1'` 组成的二维矩阵内，找到只包含 `'1'` 的最大正方形，并返回其面积。
+
+可以使用动态规划降低时间复杂度。我们用$ \textit{dp}(i, j)$表示以 (i, j) 为右下角，且只包含 11 的正方形的边长最大值。如果我们能计算出所有$ \textit{dp}(i, j)$ 的值，那么其中的最大值即为矩阵中只包含 11 的正方形的边长最大值，其平方即为最大正方形的面积。 
+
+```python
+class Solution:
+    def maximalSquare(self, matrix: List[List[str]]) -> int:
+        dp = [[0 for _ in range(len(matrix[0]))] for _ in range(len(matrix))]
+        maxSide = 0#记录最大边长
+        for i in range(len(dp)):
+            for j in range(len(dp[0])):
+                if matrix[i][j] == '1':maxSide = max(maxSide,1)
+                if i == 0 or j == 0:
+                    dp[i][j] = int(matrix[i][j])
+                else:
+                    if matrix[i][j] == '1':
+                        dp[i][j] = min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1])+1
+                        maxSide = max(maxSide,dp[i][j])
+                    else:
+                        dp[i][j] = 0
+        return maxSide*maxSide
+```
+
+### 279 完全平方数
+
+> 给你一个整数 n ，返回 和为 n 的完全平方数的最少数量 。
+>
+> 完全平方数 是一个整数，其值等于另一个整数的平方；换句话说，其值等于一个整数自乘的积。例如，1、4、9 和 16 都是完全平方数，而 3 和 11 不是。
+>
+
+动态规划状态转移方程为
+
+dp[i] = min(dp[i-1^2],dp[i-2^2],dp[i-3^2]...)+1 （需要保证下表大于0）
+
+```python
+class Solution:
+    def numSquares(self, n: int) -> int:
+        dp = [0 for _ in range(n+1)]
+        dp[0] = 0
+        for i in range(1,n+1):
+            #状态转移方程
+            dp[i] = min([dp[i-j*j] for j in range(1,int(n**0.5)+1) if i-j*j >= 0])+1
+        return dp[-1]
+```
+
+### 91 解码方式
+
+> 一条包含字母 A-Z 的消息通过以下映射进行了 编码 ：
+>
+> 'A' -> "1"
+> 'B' -> "2"
+> ...
+> 'Z' -> "26"
+> 要 解码 已编码的消息，所有数字必须基于上述映射的方法，反向映射回字母（可能有多种方法）。例如，"11106" 可以映射为：
+>
+> "AAJF" ，将消息分组为 (1 1 10 6)
+> "KJF" ，将消息分组为 (11 10 6)
+> 注意，消息不能分组为  (1 11 06) ，因为 "06" 不能映射为 "F" ，这是由于 "6" 和 "06" 在映射中并不等价。
+>
+> 给你一个只含数字的 非空 字符串 s ，请计算并返回 解码 方法的 总数 。
+>
+> 题目数据保证答案肯定是一个 32 位 的整数。
+>
+
+动态规划
+
+```python
+class Solution:
+    def numDecodings(self, s: str) -> int:
+        if s[0] == '0': return 0
+        dp = [0 for _ in range(len(s))]
+        dp[0] = 1
+        for i in range(1,len(s)):
+            if s[i] != '0':#当前位置不为0时，考虑一位数的情况，结果需要加上dp[i-1]
+                dp[i] += dp[i-1]
+            if int(s[i-1:i+1]) <=26 and s[i-1] !='0':#前一个位置不为0，则可以考虑两位数的情况，若满足两位数条件，则结果需要再加上dp[i-2]
+                if i-2 >= 0:#保证i-2为整数
+                    dp[i] += dp[i-2]
+                else:
+                    dp[i] += 1
+        return dp[-1]
+```
+

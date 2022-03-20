@@ -1,27 +1,15 @@
-import collections
-class Solution:
-    def updateMatrix(self, matrix) :
-        m, n = len(matrix), len(matrix[0])
-        dist = [[0] * n for _ in range(m)]
-        zeroes_pos = [(i, j) for i in range(m) for j in range(n) if matrix[i][j] == 0]
-        # 将所有的 0 添加进初始队列中
-        q = collections.deque(zeroes_pos)
-        seen = set(zeroes_pos)
-
-        # 广度优先搜索
-        while q:
-            i, j = q.popleft()
-            for ni, nj in [(i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1)]:
-                if 0 <= ni < m and 0 <= nj < n and (ni, nj) not in seen:
-                    dist[ni][nj] = dist[i][j] + 1
-                    q.append((ni, nj))
-                    seen.add((ni, nj))
-
-        return dist
+def solution(s):
+    dp = [0 for _ in range(len(s))]
+    dp[0] = 1
+    for i in range(1,len(s)):
+        if s[i] != '0':
+            dp[i] += dp[i-1]
+        if int(s[i-1:i+1]) <=26 and s[i-1] !='0':
+            if i-2 > 0:
+                dp[i] += dp[i-2]
+            else:
+                dp[i] += 1
+    return dp[-1]
 if __name__ == '__main__':
-    dist = [0 for _ in range(0)] for _ in range(10)
-    q = collections.deque(zeroes_pos)
-    test = [(0,1),(1,2),(2,3)]
-    seen = set(test)
-    print(test)
-    print(seen)
+    #print(int(5**0.5))
+    print(solution('11106'))
