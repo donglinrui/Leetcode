@@ -1384,3 +1384,46 @@ class Solution:
         return dp[-1]
 ```
 
+### 139 单词拆分
+
+> 给你一个字符串 `s` 和一个字符串列表 `wordDict` 作为字典。请你判断是否可以利用字典中出现的单词拼接出 `s` 。
+
+
+
+```python
+class Solution:
+    def wordBreak(self, s: str, wordDict: List[str]) -> bool:
+        dp = [False for _ in range(len(s))]
+        for i in range(len(s)):
+            flag = False #记录以第i位置为终点是否找到过在字典中的字符串
+            for j in range(i,-1,-1):#从i开始向前找
+                if s[j:i+1] in wordDict:#如果找到了
+                    flag = flag or dp[j-1]#注意这里需要j-1，即为找到字符串开始节点的前一个
+                    if j == 0:
+                        flag = True
+            dp[i] = flag
+        return dp[-1]
+```
+
+### 300 最长递增子序列
+
+> 给你一个整数数组 nums ，找到其中最长严格递增子序列的长度。
+>
+> 子序列 是由数组派生而来的序列，删除（或不删除）数组中的元素而不改变其余元素的顺序。例如，[3,6,2,7] 是数组 [0,3,1,6,2,2,7] 的子序列。
+>
+
+注意返回的结果不一定为dp[-1]，也有可能为max(dp),一定要斟酌下这里
+
+```python
+class Solution:
+    def lengthOfLIS(self, nums: List[int]) -> int:
+        dp = [1] + [0]*(len(nums)-1)
+        for i in range(1,len(nums)):
+            if [dp[j] for j in range(i) if nums[j]<nums[i]] != []:#若nums[0:i]中存在比nums[i]更小的元素，则找出dp[0:i]中的最大值，并+1
+                dp[i] = max([dp[j] for j in range(i) if nums[j]<nums[i]]) + 1
+            else:
+                dp[i] = 1
+        print(dp)
+        return max(dp)
+```
+
