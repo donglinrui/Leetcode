@@ -1,12 +1,14 @@
-def solution(nums):
-    dp = [1] + [0]*(len(nums)-1)
-    for i in range(1,len(nums)):
-        if [dp[j] for j in range(i) if nums[j]<nums[i]] != []:
-            dp[i] = max([dp[j] for j in range(i) if nums[j]<nums[i]]) + 1
-        else:
-            dp[i] = 1
-    print(dp)
-    return dp[-1]
+def solution(text1,text2):
+    if len(text1) == 0 or len(text2) == 0: return 0
+    dp = [[0 for _ in range(len(text1)+1)] for _ in range(len(text2)+1)]
+    for i in range(1,len(text2)+1):
+        for j in range(1,len(text1)+1):
+            if text1[j-1] == text2[i-1]:
+                dp[i][j] = dp[i-1][j-1] + 1
+            else:
+                dp[i][j] = max(dp[i-1][j],dp[i][j-1])
+    return dp[-1][-1]
 if __name__ == '__main__':
-    nums = [10,9,2,5,3,7,101,18]
-    print(solution( [0,1,0,3,2,3]))
+    text1 = "abcde"
+    text2 = "ace"
+    print(solution(text1,text2))

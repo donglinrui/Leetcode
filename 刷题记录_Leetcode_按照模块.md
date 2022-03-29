@@ -1423,7 +1423,33 @@ class Solution:
                 dp[i] = max([dp[j] for j in range(i) if nums[j]<nums[i]]) + 1
             else:
                 dp[i] = 1
-        print(dp)
         return max(dp)
+```
+
+### 1143 最长公共子序列
+
+> 给定两个字符串 text1 和 text2，返回这两个字符串的最长 公共子序列 的长度。如果不存在 公共子序列 ，返回 0 。
+>
+> 一个字符串的 子序列 是指这样一个新的字符串：它是由原字符串在不改变字符的相对顺序的情况下删除某些字符（也可以不删除任何字符）后组成的新字符串。
+>
+> 例如，"ace" 是 "abcde" 的子序列，但 "aec" 不是 "abcde" 的子序列。
+> 两个字符串的 公共子序列 是这两个字符串所共同拥有的子序列。
+
+ 二维动态规划
+
+思考使用二维动态规划还是一维动态规划很重要
+
+```python
+class Solution:
+    def longestCommonSubsequence(self, text1: str, text2: str) -> int:
+        if len(text1) == 0 or len(text2) == 0: return 0
+        dp = [[0 for _ in range(len(text1)+1)] for _ in range(len(text2)+1)]
+        for i in range(1,len(text2)+1):
+            for j in range(1,len(text1)+1):#新添加进来的字符为text1[j-1]和text2[i-1]
+                if text1[j-1] == text2[i-1]:#如果新添加进来的字符相同
+                    dp[i][j] = dp[i-1][j-1] + 1
+                else:#如果新添加进来的字符不同
+                    dp[i][j] = max(dp[i-1][j],dp[i][j-1])
+        return dp[-1][-1]
 ```
 
