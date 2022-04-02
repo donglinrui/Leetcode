@@ -1498,3 +1498,50 @@ class Solution:
         return dp[-1]
 ```
 
+### 474 一和零
+
+> 给你一个二进制字符串数组 strs 和两个整数 m 和 n 。
+>
+> 请你找出并返回 strs 的最大子集的长度，该子集中 最多 有 m 个 0 和 n 个 1 。
+>
+> 如果 x 的所有元素也是 y 的元素，集合 x 是集合 y 的 子集 。
+
+三维动态规划转换成二维动态规划
+
+```python
+class Solution:
+    def findMaxForm(self, strs: List[str], m: int, n: int) -> int:
+        if m < 0 or n < 0: return 0
+        if m == 0 and n == 0: return 0
+        dp = [[0 for _ in range(m+1)] for _ in range(n+1)]
+        for s in strs:
+            n_1 = s.count('1')
+            n_0 = s.count('0')
+            for i in range(m,-1,-1):
+                for j in range(n,-1,-1):
+                    if j >= n_1 and i >= n_0:#如果是可以放入的情况
+                        dp[j][i] = max(dp[j][i],dp[j-n_1][i-n_0]+1)#则动态规划放入和不放入的情况
+        return dp[-1][-1]
+```
+
+### 322 零钱兑换
+
+> 给你一个整数数组 coins ，表示不同面额的硬币；以及一个整数 amount ，表示总金额。
+>
+> 计算并返回可以凑成总金额所需的 最少的硬币个数 。如果没有任何一种硬币组合能组成总金额，返回 -1 。
+>
+> 你可以认为每种硬币的数量是无限的。
+
+完全背包问题
+
+```python
+class Solution:
+    def coinChange(self, coins: List[int], amount: int) -> int:
+        dp = [0]+[amount+2]*(amount)
+        for i in range(amount+1):
+            for coin in coins:
+                if i >= coin:
+                    dp[i] = min(dp[i],dp[i-coin]+1)
+        return dp[-1] if dp[-1]!=amount+2 else -1#若dp[-1]没有被更改过，则说明没有coin能放入背包，则return-1
+```
+
