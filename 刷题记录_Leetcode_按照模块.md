@@ -1537,11 +1537,41 @@ class Solution:
 ```python
 class Solution:
     def coinChange(self, coins: List[int], amount: int) -> int:
-        dp = [0]+[amount+2]*(amount)
+        dp = [0]+[amount+2]*(amount)#dp的值不可能大于amount，amount+2则为无限
         for i in range(amount+1):
             for coin in coins:
                 if i >= coin:
                     dp[i] = min(dp[i],dp[i-coin]+1)
         return dp[-1] if dp[-1]!=amount+2 else -1#若dp[-1]没有被更改过，则说明没有coin能放入背包，则return-1
+```
+
+### 72 距离编辑
+
+> 给你两个单词 word1 和 word2， 请返回将 word1 转换成 word2 所使用的最少操作数  。
+>
+> 你可以对一个单词进行如下三种操作：
+>
+> 插入一个字符
+> 删除一个字符
+> 替换一个字符
+
+
+
+```python
+class Solution:
+    def minDistance(self, word1: str, word2: str) -> int:
+        if len(word1) == 0 or len(word2) == 0: return max(len(word1),len(word2))
+        dp = [[0 for _ in range(len(word2)+1)] for _ in range(len(word1)+1)]
+        dp[0][0] = 0
+        for i in range(len(word1)+1):
+            for j in range(len(word2)+1):
+                if i == 0 or j == 0:#若word1或word2为空的情况，则dp值为另一个字符串的长度
+                    dp[i][j] = max(i,j)
+                    continue
+                if word1[i-1]==word2[j-1]:
+                    dp[i][j] = dp[i-1][j-1]
+                else:
+                    dp[i][j] = min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1])+1#dp[i-1][j],dp[i][j-1],dp[i-1][j-1]分别对应，删除word1[i],删除word2[j]和替换word[i](删除和插入其实是相同操作，删除word1中字符等于插入word2中字符，替换是替换为和另一个字符串中相同字符)
+        return dp[-1][-1]
 ```
 
