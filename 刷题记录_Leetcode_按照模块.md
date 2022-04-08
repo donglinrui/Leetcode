@@ -1575,3 +1575,30 @@ class Solution:
         return dp[-1][-1]
 ```
 
+### 650 只有两个键的键盘
+
+> 最初记事本上只有一个字符 'A' 。你每次可以对这个记事本进行两种操作：
+>
+> Copy All（复制全部）：复制这个记事本中的所有字符（不允许仅复制部分字符）。
+> Paste（粘贴）：粘贴 上一次 复制的字符。
+> 给你一个数字 n ，你需要使用最少的操作次数，在记事本上输出 恰好 n 个 'A' 。返回能够打印出 n 个 'A' 的最少操作次数。
+
+乘法的动态规划
+
+```python
+class Solution:
+    def minSteps(self, n: int) -> int:
+        if n < 2: return 0
+        dp = [0]*2 + [n+1]*(n-1)
+        for i in range(2,n+1):
+            dp[i] = i
+            for j in range(2,int(n**(0.5))+1):#如果能有整除的情况在,j和i//j必然有一个小于n的0.5次方
+                if i%j == 0:
+                    dp[i] = min(dp[j]+i//j,dp[i//j]+j)
+                    #生成j，然后复制1次粘贴i//j-1次
+                    #生成i//j，复制一次粘贴j-次
+                    #要找到j的最小值，即i//j的最大值
+                    break
+        return dp[-1]
+```
+
