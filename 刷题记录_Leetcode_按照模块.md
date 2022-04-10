@@ -1602,3 +1602,38 @@ class Solution:
         return dp[-1]
 ```
 
+### 10 正则表达式匹配
+
+> 给你一个字符串 s 和一个字符规律 p，请你来实现一个支持 '.' 和 '*' 的正则表达式匹配。
+>
+> '.' 匹配任意单个字符
+> '*' 匹配零个或多个前面的那一个元素
+> 所谓匹配，是要涵盖 整个 字符串 s的，而不是部分字符串。
+
+
+
+```python
+class Solution:
+    def isMatch(self, s: str, p: str) -> bool:
+        m,n = len(s),len(p)
+        def match(i,j):#match函数用于判断地s[i-1]和p[j-1]是否匹配
+            if i == 0:
+                return False
+            if p[j-1] == '.':
+                return True
+            return s[i-1] == p[j-1]
+        dp = [[False]*(n+1) for _ in range(m+1)]
+        dp[0][0] = True
+        for i in range(m+1):
+            for j in range(1,n+1):#当p为空，且s不为空时，一定匹配失败
+                if p[j-1] == '*':
+                    dp[i][j] = dp[i][j-2]#匹配0个p[j-1]元素时
+                    if match(i,j-1):
+                        dp[i][j] = dp[i-1][j] or dp[i][j-2]
+                else:
+                    if match(i,j):
+                        dp[i][j] = dp[i-1][j-1]
+        print(dp)
+        return dp[-1][-1]
+```
+

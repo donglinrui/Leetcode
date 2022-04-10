@@ -1,13 +1,27 @@
-def solution(n):
-    if n < 2: return 0
-    dp = [0]*2 + [n+1]*(n-1)
-    for i in range(2,n+1):
-        dp[i] = i
-        for j in range(2,int(n**0.5)):#由于 i 肯定同时拥有因数 j 和 i/j,两者必有一个小于sqrt(n)
-            if i%j == 0:
-                dp[i] = min(dp[j]+i//j,dp[i//j]+j,dp[i])
-                break
-    return dp[-1]
+def solution(s,p):
+    m, n = len(s), len(p)
+    def match(i, j):  # match函数用于判断地s[i-1]和p[j-1]是否匹配
+        if i == 0:
+            return False
+        if p[j - 1] == '.':
+            return True
+        return s[i - 1] == p[j - 1]
+
+    dp = [[False] * (n + 1) for _ in range(m + 1)]
+    dp[0][0] = True
+    for i in range(m + 1):
+        for j in range(1, n + 1):  # 当p为空，且s不为空时，一定匹配失败
+            if p[j - 1] == '*':
+                dp[i][j] = [i][j - 2]  # 匹配0个p[j-1]元素时
+                if match(i, j - 1):
+                    dp[i][j] = dp[i - 1][j] 
+            else:
+                if match(i, j):
+                    dp[i][j] = dp[i - 1][j - 1]
+    print(dp)
+    return dp[-1][-1]
+
 if __name__ == '__main__':
-    n = 3
-    print(solution(n))
+    s = "aa"
+    p = "a*"
+    print(solution(s,p))
