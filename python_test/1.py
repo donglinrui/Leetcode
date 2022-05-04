@@ -1,27 +1,21 @@
-def solution(s,p):
-    m, n = len(s), len(p)
-    def match(i, j):  # match函数用于判断地s[i-1]和p[j-1]是否匹配
-        if i == 0:
-            return False
-        if p[j - 1] == '.':
-            return True
-        return s[i - 1] == p[j - 1]
-
-    dp = [[False] * (n + 1) for _ in range(m + 1)]
-    dp[0][0] = True
-    for i in range(m + 1):
-        for j in range(1, n + 1):  # 当p为空，且s不为空时，一定匹配失败
-            if p[j - 1] == '*':
-                dp[i][j] = [i][j - 2]  # 匹配0个p[j-1]元素时
-                if match(i, j - 1):
-                    dp[i][j] = dp[i - 1][j] 
-            else:
-                if match(i, j):
-                    dp[i][j] = dp[i - 1][j - 1]
-    print(dp)
-    return dp[-1][-1]
-
+import scipy.io
+def rob(nums):
+    def fun(start,end):
+        ll = end - start
+        if ll == 2: return max(nums[start],nums[end-1])#如果有两个元素（不可能有两个以上的元素的情况出现）
+        dp = [0]*ll
+        dp[0] = nums[start]
+        dp[1] = max(nums[start],nums[start+1])
+        for i in range(2,ll):
+            dp[i] = max(dp[i-1],dp[i-2]+nums[start+i])
+        return dp[-1]
+    l = len(nums)
+    if l == 1:
+        return nums[0]
+    elif l == 2:
+        return max(nums[0],nums[1])
+    else:
+        return max(fun(0,l-1),fun(1,l))#由于第一家和最后一家不可以同时偷盗，所以要把最终结果分为这两种情况考虑
 if __name__ == '__main__':
-    s = "aa"
-    p = "a*"
-    print(solution(s,p))
+    nums = [1,2,3,1]
+    print(rob(nums))
