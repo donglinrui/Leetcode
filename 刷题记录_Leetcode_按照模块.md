@@ -1689,3 +1689,24 @@ class Solution:
             return max(fun(0,l-1),fun(1,l))#由于第一家和最后一家不可以同时偷盗，所以要把最终结果分为
 ```
 
+### 53 最大子数组和
+
+> 给你一个整数数组 `nums` ，请你找出一个具有最大和的连续子数组（子数组最少包含一个元素），返回其最大和。
+>
+> **子数组** 是数组中的一个连续部分。
+
+
+
+```python
+class Solution:
+    def maxSubArray(self, nums: List[int]) -> int:
+        pre= 0
+        res_max = nums[0]
+        #pre用于记录之前元素和
+        #res_max用于记录最大值
+        for i in nums:
+            pre = max(i,i+pre)#前面元素若小于0，则放弃前面元素之和，从i开始寻找新的子数组
+            res_max = max(res_max,pre)
+        return res_max
+```
+
