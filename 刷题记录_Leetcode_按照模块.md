@@ -1710,3 +1710,39 @@ class Solution:
         return res_max
 ```
 
+### 494 目标和
+
+> 给你一个整数数组 nums 和一个整数 target 。
+>
+> 向数组中的每个整数前添加 '+' 或 '-' ，然后串联起所有整数，可以构造一个 表达式 ：
+>
+> 例如，nums = [2, 1] ，可以在 2 之前添加 '+' ，在 1 之前添加 '-' ，然后串联起来得到表达式 "+2-1" 。
+> 返回可以通过上述方法构造的、运算结果等于 target 的不同 表达式 的数目。
+
+转化为0-1背包问题
+
+0-1背包问题：物品遍历在外，内部逆序遍历权重
+
+完全背包问题：权重遍历在外，内部正序遍历物品
+
+```python
+class Solution:
+    def findTargetSumWays(self, nums: List[int], target: int):
+        #l = len(nums)
+        s = sum(nums)
+        if s-target <0 or (s-target)%2 !=0:
+            return 0
+        neg = (s-target)//2
+        #转化为背包问题，(sum-target)//2 = neg
+        #sum为总和
+        #neg为加减号的数量
+        #sum - 2neg = target
+        dp = [0]*(neg+1)#动态规划的数组的长度是目标和
+        dp[0] = 1
+        for n in nums:
+            for i in range(neg,n-1,-1):
+                dp[i] += dp[i-n]
+        #print(dp)
+        return dp[-1]
+```
+
