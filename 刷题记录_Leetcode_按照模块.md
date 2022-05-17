@@ -1746,3 +1746,31 @@ class Solution:
         return dp[-1]
 ```
 
+## 分治法
+
+### 241 为运算式设计优先级
+
+> 给你一个由数字和运算符组成的字符串 `expression` ，按不同优先级组合数字和运算符，计算并返回所有可能组合的结果。你可以 **按任意顺序** 返回答案。
+
+ 
+
+```python
+class Solution:
+    def diffWaysToCompute(self, expression: str) -> List[int]:
+        #如果是数字，直接返回
+        if expression.isdigit():
+            return [(int(expression))]
+        res = []
+        #遍历啊整个表达式
+        for i,c in enumerate(expression):
+            if c in ['+','-','*']:#如果是运算符，则分别计算两边的和
+                left = self.diffWaysToCompute(expression[:i])
+                right = self.diffWaysToCompute(expression[i+1:])
+                for l in left:
+                    for r in right:
+                        if c == '+': res.append(r+l)
+                        elif c == '-': res.append(l-r)
+                        else: res.append(l*r)
+        return res#返回值是所有可能结果的list
+```
+
